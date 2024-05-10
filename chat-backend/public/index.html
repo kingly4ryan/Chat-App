@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+</head>
+<body>
+    <h1>Chat App</h1>
+
+    <div id="registration">
+        <h2>Registration</h2>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="register()">Register</button>
+    </div>
+
+    <div id="login">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="chat">
+        <h2>Chat</h2>
+        <input type="text" id="message" placeholder="Enter message">
+        <button onclick="sendMessage()">Send</button>
+        <button onclick="setUserStatus('AVAILABLE')">Set Available</button>
+        <button onclick="setUserStatus('BUSY')">Set Busy</button>
+        <div id="chatHistory"></div>
+    </div>
+
+    <script>
+        async function register() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const response = await fetch('API_URL/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            console.log(data); // Handle response
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const response = await fetch('API_URL/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            console.log(data); // Handle response
+        }
+
+        async function sendMessage() {
+            const message = document.getElementById('message').value;
+            const response = await fetch('API_URL/sendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            console.log(data); // Handle response
+        }
+
+        async function setUserStatus(status) {
+            const response = await fetch('API_URL/setUserStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status })
+            });
+            const data = await response.json();
+            console.log(data); // Handle response
+        }
+
+        // Function to fetch and display chat history
+        async function fetchChatHistory() {
+            const response = await fetch('API_URL/chatHistory');
+            const data = await response.json();
+            // Display chat history data on the UI
+            const chatHistoryElement = document.getElementById('chatHistory');
+            chatHistoryElement.innerHTML = ''; // Clear previous chat history
+            data.forEach(message => {
+                chatHistoryElement.innerHTML += `<p>${message.sender}: ${message.text}</p>`;
+            });
+        }
+
+        // Fetch chat history on page load
+        fetchChatHistory();
+    </script>
+</body>
+</html>
